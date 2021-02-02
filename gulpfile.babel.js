@@ -1,7 +1,7 @@
 import gulp from "gulp";
 import gpug from "gulp-pug";
 import del from "del";
-import webServer from "gulp-webserver";
+import ws from "gulp-webserver";
 
 const routes = {
 	pug: {
@@ -17,7 +17,7 @@ const pug = () =>
 const clean = () => del(["build"]);
 
 const server = () =>
-	gulp.src("build").pipe(webServer({ livereload: true, open: true }));
+	gulp.src("build").pipe(ws({ livereload: true, open: true }));
 
 const watch = () => {
 	gulp.watch(routes.pug.watch, pug);
