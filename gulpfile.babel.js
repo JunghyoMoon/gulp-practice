@@ -4,6 +4,7 @@ import del from "del";
 import ws from "gulp-webserver";
 // gulp의 이미지 변환 툴? 압축 툴? 다양한 옵션도 가지고 있음.
 import image from "gulp-image";
+import sass from "gulp-sass";
 
 const routes = {
     pug: {
@@ -30,6 +31,7 @@ const img = () =>
 
 const watch = () => {
     gulp.watch(routes.pug.watch, pug);
+    // 때때로 용량이 큰 이미지를 최적화할 경우 겁나게 오래 걸릴 수 있으니, watch 사용에 신경쓸 것
     gulp.watch(routes.img.src, img);
 };
 
