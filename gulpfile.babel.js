@@ -5,7 +5,10 @@ import ws from "gulp-webserver";
 // gulp의 이미지 변환 툴? 압축 툴? 다양한 옵션도 가지고 있음.
 import image from "gulp-image";
 import sass from "gulp-sass";
-import autop from "gulp-autoprefixer";
+// 브라우저들의 호환성을 위해 사용.
+import autoprefixer from "gulp-autoprefixer";
+// stylesheet를 압축해 브라우저에서의 로딩 속도 향상
+import minify from "gulp-csso";
 
 sass.compiler = require("node-sass");
 
@@ -42,10 +45,11 @@ const style = () =>
         .src(routes.scss.src)
         .pipe(sass().on("error", sass.logError))
         .pipe(
-            autop({
+            autoprefixer({
                 browsers: ["last 2 versions"],
             })
         )
+        .pipe(minify())
         .pipe(gulp.dest(routes.scss.dest));
 
 const watch = () => {
