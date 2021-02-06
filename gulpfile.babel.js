@@ -9,6 +9,9 @@ import sass from "gulp-sass";
 import autoprefixer from "gulp-autoprefixer";
 // stylesheet를 압축해 브라우저에서의 로딩 속도 향상
 import minify from "gulp-csso";
+// browserify: import문을 읽어올 수 있게 해줌
+import bro from "gulp-bro";
+import babelify from "babelify";
 
 sass.compiler = require("node-sass");
 
@@ -26,6 +29,11 @@ const routes = {
         watch: "src/scss/**/*.scss",
         src: "src/scss/style.scss",
         dest: "build/css",
+    },
+    js: {
+        watch: "src/js/**/*.js",
+        src: "src/js/main.js",
+        dest: "build/js",
     },
 };
 
@@ -52,16 +60,30 @@ const style = () =>
         .pipe(minify())
         .pipe(gulp.dest(routes.scss.dest));
 
+const js = () =>
+    gulp
+        .src(routes.js.src)
+        .pipe(
+            bro({
+                transform: [
+                    babelify.configure({ presets: ["@babel/preset-env"] }),
+                    ["uglifyify", { global: true }],
+                ],
+            })
+        )
+        .pipe(gulp.dest(routes.js.dest));
+
 const watch = () => {
     gulp.watch(routes.pug.watch, pug);
     gulp.watch(routes.scss.watch, style);
     // 때때로 용량이 큰 이미지를 최적화할 경우 겁나게 오래 걸릴 수 있으니, watch 사용에 신경쓸 것
     gulp.watch(routes.img.src, img);
+    gulp.watch(routes.js.src, js);
 };
 
 const prepare = gulp.series([clean, img]);
 
-const assets = gulp.series([pug, style]);
+const assets = gulp.series([pug, style, js]);
 // gulp.series : 순차 실행
 // gulp.parallel : 동시 실행
 const live = gulp.parallel([server, watch]);
